@@ -175,10 +175,40 @@ public class MapEventCenter implements OnMarkerClickListener, OnMapTouchListener
 		}
 	}
 
+
+
+	/**
+	 *  //-------------------------------------begin --------------------------------------------------
+	 *   After upgrade to v2.0 , there is only one info window on the map at one time. If you want 
+	 *   to show info window ,you must implments InfoWindowAdapter. Reusing the inflated view
+	 *   is a good idea when you don't want to inflate the xml every time. Unexpectedly it will throw 
+	 *   exception when you show the info window of another marker on the same layer. 
+	 *   
+	 *    As a result, i wrap each view with a LinearLayout as parent. So you can avoid this  before 
+	 *    assign new values to this one which has been initialed before,just do it as follow:
+	 *    
+	 *         ViewParent vp =	view.getParent();
+     *               if(vp != null){
+     *	             ViewGroup vg = (ViewGroup)vp;
+     *                vg.removeView(targetView);
+      *            }
+	 */
+	
+	/**
+	 *  you can change the background of info window for a special layer, just implements this interface.
+	 * 
+	 *
+	 */
 	public static interface WrapperCreator {
 		public ViewGroup getWrapper(View view);
 	}
-
+	
+	
+	/**
+	 *  you can change the background of info window ,just override this method.
+	 * @param view
+	 * @return
+	 */
 	private View packWrapper(View view) {
 		LinearLayout wrapper = new LinearLayout(mContext);
 		wrapper.setOrientation(LinearLayout.VERTICAL);
@@ -221,6 +251,11 @@ public class MapEventCenter implements OnMarkerClickListener, OnMapTouchListener
 		return null;
 	}
 
+	/**
+	 *  //-------------------------------------end --------------------------------------------------
+	 */
+	
+	
 	@Override
 	public void onMarkerDragStart(Marker paramMarker) {
 		for (OnMarkerDragListener listener : markerDragListeners) {
